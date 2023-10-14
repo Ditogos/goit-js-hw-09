@@ -11,17 +11,18 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    if (selectedDates[0] <= new Date()) {
+    if (selectedDates <= Date.now()) {
       Notiflix.Notify.failure('Please choose a date in the future');
       inputTextData.value = '';
+      startButton.disabled = true;
     } else {
-      startButton.removeAttribute('disable');
+      startButton.disabled = false;
     }
   },
 };
 flatpickr(inputTextData, options);
 
-const startButton = document.querySelector('button[data-start');
+const startButton = document.querySelector('button[data-start]');
 const timerFields = {
   days: document.querySelector('[data-days]'),
   hours: document.querySelector('[data-hours]'),
@@ -32,12 +33,11 @@ let countdownInterval;
 
 startButton.addEventListener('click', () => {
   const selectedDate = new Date(inputTextData.value);
-  const currentTime = new Date();
+  const currentTime = Date.now();
 
   if (selectedDate <= currentTime) {
     Notiflix.Notify.failure('Please choose a date in the future');
   } else {
-    startButton.disabled = true;
     countdownInterval = setInterval(() => {
       updateTimer(selectedDate);
     }, 1000);
@@ -45,25 +45,26 @@ startButton.addEventListener('click', () => {
 });
 
 function updateTimer(endTime) {
-  const now = new Date();
+  const now = Date.now();
   const timeRemaining = endTime - now;
+
+  function updateTimerDisplay(days, hours, minutes, seconds) {
+    timerFields.days.textContent = addLeadingZero(days);
+    timerFields.hours.textContent = addLeadingZero(hours);
+    timerFields.minutes.textContent = addLeadingZero(minutes);
+    timerFields.seconds.textContent = addLeadingZero(seconds);
+  }
 
   if (timeRemaining <= 0) {
     clearInterval(countdownInterval);
     startButton.removeAttribute('disabled');
-    timerFields.days.textContent = '00';
-    timerFields.hours.textContent = '00';
-    timerFields.minutes.textContent = '00';
-    timerFields.seconds.textContent = '00';
+    updateTimerDisplay(0, 0, 0, 0);
     return;
   }
 
   const { days, hours, minutes, seconds } = convertMs(timeRemaining);
 
-  timerFields.days.textContent = addLeadingZero(days);
-  timerFields.hours.textContent = addLeadingZero(hours);
-  timerFields.minutes.textContent = addLeadingZero(minutes);
-  timerFields.seconds.textContent = addLeadingZero(seconds);
+  updateTimerDisplay(days, hours, minutes, seconds);
 }
 
 function convertMs(ms) {
@@ -84,7 +85,45 @@ function addLeadingZero(value) {
   return value.toString().padStart(2, '0');
 }
 
-const styleCalendar = document.querySelector('.timer');
+const divContainerCalendar = document.querySelector('.container');
+const inputCalendar = document.getElementById('datetime-picker');
+const inputStartCalendar = document.querySelector('button[data-start]');
+const styleTimer = document.querySelector('.timer');
+const spanStyleTimer = document.querySelectorAll('.timer span');
 
-styleCalendar.style.display = 'flex';
-styleCalendar.style.gap = '10px';
+styleTimer.style.display = 'flex';
+styleTimer.style.justifyContent = 'center';
+styleTimer.style.alignItems = 'center';
+styleTimer.style.width = '100%';
+styleTimer.style.height = '100%';
+styleTimer.style.flexDirection = 'column';
+
+spanStyleTimer.forEach(span => {
+  span.style.display = 'inline-block';
+  span.style.backgroundColor = '#f7f7f7';
+  span.style.border = '1px solid #ddd';
+  span.style.padding = '10px';
+  span.style.borderRadius = '5px';
+  span.style.fontSize = '20px';
+});
+
+divContainerCalendar.style.display = 'flex';
+divContainerCalendar.style.flexDirection = 'column';
+divContainerCalendar.style.alignItems = 'center';
+divContainerCalendar.style.justifyContent = 'center';
+divContainerCalendar.style.height = '100px';
+
+inputCalendar.style.padding = '10px';
+inputCalendar.style.margin = '10px';
+inputCalendar.style.border = '1px solid #ddd';
+inputCalendar.style.borderRadius = '5px';
+inputCalendar.style.fontSize = '16px';
+
+inputStartCalendar.style.padding = '10px 20px';
+inputStartCalendar.style.margin = '10px';
+inputStartCalendar.style.backgroundColor = '#4CAF50';
+inputStartCalendar.style.color = 'white';
+inputStartCalendar.style.border = 'none';
+inputStartCalendar.style.borderRadius = '5px';
+inputStartCalendar.style.cursor = 'pointer';
+inputStartCalendar.style.fontSize = '16px';

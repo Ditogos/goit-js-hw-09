@@ -7,6 +7,7 @@ colorStart.addEventListener('click', () => {
   intervalId = setInterval(() => {
     bodyColor.style.backgroundColor = getRandomHexColor();
   }, 1000);
+  colorStart.disabled = true;
 });
 
 function getRandomHexColor() {
@@ -16,4 +17,5 @@ function getRandomHexColor() {
 }
 colorStop.addEventListener('click', () => {
   clearInterval(intervalId);
+  colorStart.disabled = false;
 });
