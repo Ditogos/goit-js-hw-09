@@ -85,6 +85,8 @@ function addLeadingZero(value) {
   return value.toString().padStart(2, '0');
 }
 
+// Styles Css
+
 const divContainerCalendar = document.querySelector('.container');
 const inputCalendar = document.getElementById('datetime-picker');
 const inputStartCalendar = document.querySelector('button[data-start]');
